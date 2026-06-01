@@ -295,6 +295,60 @@
   .r2 { background: var(--warning-bg); color: var(--warning-text); }
   .r3 { background: var(--danger-bg); color: var(--danger-text); }
 
+  /* ── AUDIO PLAYER ── */
+  .play-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 12px;
+    transition: background .15s, transform .1s;
+    margin-left: 2px;
+  }
+  .play-btn:hover { background: var(--accent); color: #fff; transform: scale(1.08); }
+  .play-btn.playing { background: var(--accent); color: #fff; }
+  .play-btn.disabled {
+    border-color: var(--border2);
+    background: var(--surface2);
+    color: var(--text3);
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .play-btn.disabled:hover { background: var(--surface2); color: var(--text3); transform: none; }
+  .audio-bar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--accent-bg);
+    border-top: 1px solid var(--border);
+  }
+  .audio-bar.visible { display: flex; }
+  .audio-bar audio {
+    flex: 1;
+    height: 32px;
+    min-width: 0;
+  }
+  .audio-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 16px;
+    padding: 2px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .audio-close:hover { color: var(--text); }
+  .audio-label { font-size: 12px; color: var(--accent-text); font-weight: 500; white-space: nowrap; }
+
   /* ── STUDY PLAN ── */
   .plan-section {
     margin-top: 2.5rem;
@@ -517,7 +571,7 @@
 <script>
 const LECTURES = [
   {
-    id:"intro", title:"Intro à la Santé au Travail",
+    id:"intro", title:"Intro à la Santé au Travail", audio:"audio/intro.m4a",
     questions:[
       {n:3,  text:"Citer les facteurs influençant la santé au travail.", r:1},
       {n:8,  text:"Définir les notions de : danger, risque et substance.", r:1},
@@ -527,48 +581,48 @@ const LECTURES = [
     ]
   },
   {
-    id:"solvants", title:"Intoxications par les solvants",
+    id:"solvants", title:"Intoxications par les solvants", audio:"audio/solvants.m4a",
     questions:[
       {n:1,  text:"Décrire l'atteinte du système nerveux central induite par la toxicité chronique des solvants.", r:1},
       {n:24, text:"Citez les 8 sources d'exposition aux solvants.", r:1},
     ]
   },
   {
-    id:"dermatoses", title:"Dermatoses professionnelles",
+    id:"dermatoses", title:"Dermatoses professionnelles", audio:"audio/dermatoses.m4a",
     questions:[
       {n:7,  text:"Décrire les points de différence entre les dermites allergiques et irritatives.", r:1},
       {n:47, text:"Identifier la classification des dermatoses professionnelles.", r:1},
     ]
   },
   {
-    id:"rayonnements", title:"Rayonnements ionisants",
+    id:"rayonnements", title:"Rayonnements ionisants", audio:"audio/rayonnements.m4a",
     questions:[
       {n:9,  text:"Décrire les caractéristiques des effets stochastiques des rayonnements ionisants.", r:1},
       {n:25, text:"Décrire les effets des irradiations globales aigues des rayonnements ionisants.", r:1},
     ]
   },
   {
-    id:"toxicologie", title:"Toxicologie industrielle et environnementale",
+    id:"toxicologie", title:"Toxicologie industrielle et environnementale", audio:"audio/toxicologie.m4a",
     questions:[
       {n:42, text:"Décrire les formes d'intoxication en milieu industriel.", r:2},
       {n:48, text:"Décrire les formes d'intoxication en milieu industriel. [répété]", r:2},
     ]
   },
   {
-    id:"accidents", title:"Accidents du travail",
+    id:"accidents", title:"Accidents du travail", audio:"audio/accidents.m4a",
     questions:[
       {n:18, text:"Définir un accident du travail selon la réglementation algérienne.", r:1},
     ]
   },
   {
-    id:"maladies", title:"Maladies professionnelles",
+    id:"maladies", title:"Maladies professionnelles", audio:"audio/maladies.m4a",
     questions:[
       {n:19, text:"Citez les critères de reconnaissance d'une maladie professionnelle.", r:1},
       {n:34, text:"Cas clinique — Madame K Djamila (infirmière, hépatite B). S'agit-il d'une maladie professionnelle ? Justifiez via le Tableau MP n°45.", r:1},
     ]
   },
   {
-    id:"asthme", title:"Asthme professionnel",
+    id:"asthme", title:"Asthme professionnel", audio:"audio/asthme.m4a",
     questions:[
       {n:4,  text:"Citer les étapes de diagnostic de l'asthme professionnel avec période de latence.", r:1},
       {n:31, text:"Décrivez la classification de l'asthme professionnel.", r:1},
@@ -577,21 +631,21 @@ const LECTURES = [
     ]
   },
   {
-    id:"pneumo", title:"Pneumoconioses",
+    id:"pneumo", title:"Pneumoconioses", audio:"audio/pneumo.m4a",
     questions:[
       {n:20, text:"Citez les pathologies pleurales bénignes et tumorales liées à l'exposition à l'amiante.", r:1},
       {n:50, text:"Citer les complications de la silicose.", r:1},
     ]
   },
   {
-    id:"nano", title:"Nanomatériaux et santé",
+    id:"nano", title:"Nanomatériaux et santé", audio:"audio/nano.m4a",
     questions:[
       {n:10, text:"Citer les facteurs influençant la toxicité de l'exposition chronique aux nanomatériaux.", r:2},
       {n:22, text:"Décrire les facteurs de la toxicité de l'exposition aux nanomatériaux. [répété Q10]", r:2},
     ]
   },
   {
-    id:"plombmerc", title:"Intoxications : Plomb & Mercure",
+    id:"plombmerc", title:"Intoxications : Plomb & Mercure", audio:"audio/plomb-mercure.m4a",
     questions:[
       {n:6,  text:"Signes cliniques caractéristiques de l'imprégnation saturnine chronique + signes d'intoxication aiguë au plomb.", r:2},
       {n:11, text:"Quels sont les effets neurologiques de l'intoxication au plomb ?", r:2},
@@ -602,34 +656,34 @@ const LECTURES = [
     ]
   },
   {
-    id:"horaires", title:"Travail en horaires atypiques",
+    id:"horaires", title:"Travail en horaires atypiques", audio:"audio/horaires.m4a",
     questions:[
       {n:15, text:"Citez les conséquences du travail en horaires atypiques.", r:2},
       {n:27, text:"Citer les effets liés au travail en horaire atypique sur la santé. [répété Q15]", r:2},
     ]
   },
   {
-    id:"tic", title:"TIC et Santé au Travail",
+    id:"tic", title:"TIC et Santé au Travail", audio:"audio/tic.m4a",
     questions:[
       {n:14, text:"Citez les facteurs de stress spécifiques aux TIC.", r:1},
       {n:46, text:"Décrivez les principaux risques pour la santé associés à l'utilisation des TIC.", r:1},
     ]
   },
   {
-    id:"cancers", title:"Cancers professionnels",
+    id:"cancers", title:"Cancers professionnels", audio:"audio/cancers.m4a",
     questions:[
       {n:43, text:"Décrivez la classification du CIRC concernant la cancérogénicité des substances.", r:1},
       {n:45, text:"Citez les principes généraux de la prévention du risque chimique en milieu professionnel.", r:1},
     ]
   },
   {
-    id:"pesticides", title:"Intoxications par les Pesticides",
+    id:"pesticides", title:"Intoxications par les Pesticides", audio:"audio/pesticides.m4a",
     questions:[
       {n:39, text:"Décrire le syndrome muscarinique survenant lors de l'intoxication aiguë sévère aux organophosphorés.", r:1},
     ]
   },
   {
-    id:"burnout", title:"Épuisement Professionnel (Burnout)",
+    id:"burnout", title:"Épuisement Professionnel (Burnout)", audio:"audio/burnout.m4a",
     questions:[
       {n:2,  text:"Quels sont les facteurs de risques professionnels du burn-out ?", r:1},
       {n:30, text:"Décrire les mesures préventives pour lutter contre l'épuisement professionnel.", r:1},
@@ -637,7 +691,7 @@ const LECTURES = [
     ]
   },
   {
-    id:"bruit", title:"Bruit et Santé au Travail",
+    id:"bruit", title:"Bruit et Santé au Travail", audio:"audio/bruit.m4a",
     questions:[
       {n:13, text:"Décrivez la classification de la surdité professionnelle.", r:3},
       {n:17, text:"Quels sont les caractères de la surdité professionnelle ?", r:3},
@@ -647,7 +701,7 @@ const LECTURES = [
     ]
   },
   {
-    id:"perturbateurs", title:"Perturbateurs Endocriniens et Santé",
+    id:"perturbateurs", title:"Perturbateurs Endocriniens et Santé", audio:"audio/perturbateurs.m4a",
     questions:[
       {n:5,  text:"Quels sont les effets sur la santé des perturbateurs endocriniens ?", r:2},
       {n:28, text:"Mécanisme d'action des perturbateurs endocriniens.", r:2},
@@ -655,14 +709,14 @@ const LECTURES = [
     ]
   },
   {
-    id:"biologique", title:"Risques Biologiques et Déchets Hospitaliers",
+    id:"biologique", title:"Risques Biologiques et Déchets Hospitaliers", audio:"audio/biologique.m4a",
     questions:[
       {n:21, text:"Quels sont les critères exigés pour la confection des lieux de collecte et de stockage des déchets hospitaliers ?", r:1},
       {n:34, text:"Cas clinique hépatite B (Tableau MP n°45) — voir aussi Maladies professionnelles.", r:1},
     ]
   },
   {
-    id:"pollution", title:"Pollution Atmosphérique et Qualité de l'Air",
+    id:"pollution", title:"Pollution Atmosphérique et Qualité de l'Air", audio:"audio/pollution.m4a",
     questions:[
       {n:40, text:"Citer les polluants réglementés et les composés organiques responsables de la pollution de l'atmosphère extérieure.", r:1},
     ]
@@ -714,6 +768,64 @@ function repeatLabel(r) {
   return `<span class="repeat-pill r1">×1</span>`;
 }
 
+let currentAudio = null;
+let currentPlayBtn = null;
+
+function toggleAudio(id, audioPath, btnEl) {
+  const bar = document.getElementById('audio-bar-' + id);
+  const audioEl = document.getElementById('audio-el-' + id);
+
+  // Stop any currently playing audio from a different lecture
+  if (currentAudio && currentAudio !== audioEl) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    if (currentPlayBtn) {
+      currentPlayBtn.innerHTML = '&#9654;';
+      currentPlayBtn.classList.remove('playing');
+    }
+    document.querySelectorAll('.audio-bar').forEach(b => b.classList.remove('visible'));
+  }
+
+  if (bar.classList.contains('visible')) {
+    // Hide and stop
+    audioEl.pause();
+    audioEl.currentTime = 0;
+    bar.classList.remove('visible');
+    btnEl.innerHTML = '&#9654;';
+    btnEl.classList.remove('playing');
+    currentAudio = null;
+    currentPlayBtn = null;
+  } else {
+    // Show and play
+    bar.classList.add('visible');
+    audioEl.play();
+    btnEl.innerHTML = '&#9646;&#9646;';
+    btnEl.classList.add('playing');
+    currentAudio = audioEl;
+    currentPlayBtn = btnEl;
+
+    audioEl.onended = function() {
+      btnEl.innerHTML = '&#9654;';
+      btnEl.classList.remove('playing');
+      bar.classList.remove('visible');
+      currentAudio = null;
+      currentPlayBtn = null;
+    };
+  }
+}
+
+function closeAudioBar(id) {
+  const bar = document.getElementById('audio-bar-' + id);
+  const audioEl = document.getElementById('audio-el-' + id);
+  const btnEl = document.getElementById('play-btn-' + id);
+  audioEl.pause();
+  audioEl.currentTime = 0;
+  bar.classList.remove('visible');
+  if (btnEl) { btnEl.innerHTML = '&#9654;'; btnEl.classList.remove('playing'); }
+  currentAudio = null;
+  currentPlayBtn = null;
+}
+
 function renderSections() {
   const search = document.getElementById('searchBox').value.toLowerCase().trim();
   const container = document.getElementById('sections');
@@ -729,6 +841,18 @@ function renderSections() {
 
     const hotCount = qs.filter(q => q.r >= 2).length;
     const isOpen = openSections.has(sec.id);
+    const hasAudio = !!sec.audio;
+
+    const playBtn = hasAudio
+      ? `<button class="play-btn" id="play-btn-${sec.id}" onclick="event.stopPropagation(); toggleAudio('${sec.id}', '${sec.audio}', this)" title="Écouter le podcast" aria-label="Écouter le podcast pour ${sec.title}">&#9654;</button>`
+      : `<button class="play-btn disabled" title="Podcast bientôt disponible" aria-label="Podcast non disponible" disabled>&#9654;</button>`;
+
+    const audioBar = hasAudio ? `
+      <div class="audio-bar" id="audio-bar-${sec.id}">
+        <span class="audio-label"><i class="ti ti-headphones"></i> ${sec.title}</span>
+        <audio id="audio-el-${sec.id}" src="${sec.audio}" preload="none" controls></audio>
+        <button class="audio-close" onclick="closeAudioBar('${sec.id}')" title="Fermer" aria-label="Fermer le lecteur">&#10005;</button>
+      </div>` : '';
 
     const div = document.createElement('div');
     div.className = 'section';
@@ -738,9 +862,11 @@ function renderSections() {
         <span class="sec-meta">
           ${hotCount > 0 ? `<span class="badge badge-hot"><i class="ti ti-flame"></i> ${hotCount} répété${hotCount > 1 ? 's' : ''}</span>` : ''}
           <span class="badge badge-q">${qs.length} Q</span>
+          ${playBtn}
           <i class="ti ti-chevron-down chevron ${isOpen ? 'open' : ''}"></i>
         </span>
       </div>
+      ${audioBar}
       <div class="q-list ${isOpen ? 'open' : ''}">
         ${qs.map(q => `
           <div class="q-item">
