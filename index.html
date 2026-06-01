@@ -260,6 +260,9 @@
   .badge-q { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
   .badge-hot { background: var(--danger-bg); color: var(--danger-text); }
   .badge-med { background: var(--warning-bg); color: var(--warning-text); }
+  .badge-asked { background: var(--success-bg); color: var(--success-text); }
+  .section.asked-dimmed { opacity: 0.55; }
+  .section.asked-dimmed .sec-title { text-decoration: line-through; text-decoration-color: var(--text3); }
   .chevron { font-size: 15px; color: var(--text3); transition: transform .2s; }
   .chevron.open { transform: rotate(180deg); }
 
@@ -488,6 +491,7 @@
   <div class="toolbar">
     <button class="tab-btn active" onclick="setFilter('all', this)">Tous les cours</button>
     <button class="tab-btn" onclick="setFilter('hot', this)"><i class="ti ti-flame"></i> Répétées seulement</button>
+    <button class="tab-btn" onclick="setFilter('skip', this)"><i class="ti ti-eye-off"></i> Déjà posées — Rot. 2&3</button>
     <div class="spacer"></div>
     <span id="qcount" style="font-size:12px;color:var(--text3);"></span>
   </div>
@@ -536,6 +540,11 @@
     </div>
 
     <div class="tip-item">
+      <i class="ti ti-eye-off tip-icon star"></i>
+      <div><strong>Stratégie Rotation 1 — ignorez les cours déjà posés.</strong> Les Rotations 2 et 3 ont déjà eu : Solvants (Q1), Burnout (Q2), Intro (Q3/Q8), Asthme (Q4), Perturbateurs endocriniens (Q5), Plomb (Q6), Dermatoses (Q7), Rayonnements (Q9), Nanomatériaux (Q10). Les examinateurs posent rarement deux fois le même cours dans la même année — utilisez le filtre <em>Déjà posées — Rot. 2&3</em> pour voir ces cours en grisé et concentrez votre énergie sur les cours restants.</div>
+    </div>
+
+    <div class="tip-item">
       <i class="ti ti-flame tip-icon fire"></i>
       <div><strong>Surdité professionnelle = 5 questions.</strong> Q13, Q17, Q33, Q36, Q49 sont essentiellement les mêmes concepts (caractères, classification, stades) reformulés différemment. Une seule réponse structurée couvre tout le chapitre.</div>
     </div>
@@ -571,7 +580,7 @@
 <script>
 const LECTURES = [
   {
-    id:"intro", title:"Intro à la Santé au Travail", audio:"audio/intro.m4a",
+    id:"intro", title:"Intro à la Santé au Travail", audio:"audio/intro.m4a", asked:true,
     questions:[
       {n:3,  text:"Citer les facteurs influençant la santé au travail.", r:1},
       {n:8,  text:"Définir les notions de : danger, risque et substance.", r:1},
@@ -581,21 +590,21 @@ const LECTURES = [
     ]
   },
   {
-    id:"solvants", title:"Intoxications par les solvants", audio:"audio/solvants.m4a",
+    id:"solvants", title:"Intoxications par les solvants", audio:"audio/solvants.m4a", asked:true,
     questions:[
       {n:1,  text:"Décrire l'atteinte du système nerveux central induite par la toxicité chronique des solvants.", r:1},
       {n:24, text:"Citez les 8 sources d'exposition aux solvants.", r:1},
     ]
   },
   {
-    id:"dermatoses", title:"Dermatoses professionnelles", audio:"audio/dermatoses.m4a",
+    id:"dermatoses", title:"Dermatoses professionnelles", audio:"audio/dermatoses.m4a", asked:true,
     questions:[
       {n:7,  text:"Décrire les points de différence entre les dermites allergiques et irritatives.", r:1},
       {n:47, text:"Identifier la classification des dermatoses professionnelles.", r:1},
     ]
   },
   {
-    id:"rayonnements", title:"Rayonnements ionisants", audio:"audio/rayonnements.m4a",
+    id:"rayonnements", title:"Rayonnements ionisants", audio:"audio/rayonnements.m4a", asked:true,
     questions:[
       {n:9,  text:"Décrire les caractéristiques des effets stochastiques des rayonnements ionisants.", r:1},
       {n:25, text:"Décrire les effets des irradiations globales aigues des rayonnements ionisants.", r:1},
@@ -622,7 +631,7 @@ const LECTURES = [
     ]
   },
   {
-    id:"asthme", title:"Asthme professionnel", audio:"audio/asthme.m4a",
+    id:"asthme", title:"Asthme professionnel", audio:"audio/asthme.m4a", asked:true,
     questions:[
       {n:4,  text:"Citer les étapes de diagnostic de l'asthme professionnel avec période de latence.", r:1},
       {n:31, text:"Décrivez la classification de l'asthme professionnel.", r:1},
@@ -638,14 +647,14 @@ const LECTURES = [
     ]
   },
   {
-    id:"nano", title:"Nanomatériaux et santé", audio:"audio/nano.m4a",
+    id:"nano", title:"Nanomatériaux et santé", audio:"audio/nano.m4a", asked:true,
     questions:[
       {n:10, text:"Citer les facteurs influençant la toxicité de l'exposition chronique aux nanomatériaux.", r:2},
       {n:22, text:"Décrire les facteurs de la toxicité de l'exposition aux nanomatériaux. [répété Q10]", r:2},
     ]
   },
   {
-    id:"plombmerc", title:"Intoxications : Plomb & Mercure", audio:"audio/plomb-mercure.m4a",
+    id:"plombmerc", title:"Intoxications : Plomb & Mercure", audio:"audio/plomb-mercure.m4a", asked:true,
     questions:[
       {n:6,  text:"Signes cliniques caractéristiques de l'imprégnation saturnine chronique + signes d'intoxication aiguë au plomb.", r:2},
       {n:11, text:"Quels sont les effets neurologiques de l'intoxication au plomb ?", r:2},
@@ -683,7 +692,7 @@ const LECTURES = [
     ]
   },
   {
-    id:"burnout", title:"Épuisement Professionnel (Burnout)", audio:"audio/burnout.m4a",
+    id:"burnout", title:"Épuisement Professionnel (Burnout)", audio:"audio/burnout.m4a", asked:true,
     questions:[
       {n:2,  text:"Quels sont les facteurs de risques professionnels du burn-out ?", r:1},
       {n:30, text:"Décrire les mesures préventives pour lutter contre l'épuisement professionnel.", r:1},
@@ -701,7 +710,7 @@ const LECTURES = [
     ]
   },
   {
-    id:"perturbateurs", title:"Perturbateurs Endocriniens et Santé", audio:"audio/perturbateurs.m4a",
+    id:"perturbateurs", title:"Perturbateurs Endocriniens et Santé", audio:"audio/perturbateurs.m4a", asked:true,
     questions:[
       {n:5,  text:"Quels sont les effets sur la santé des perturbateurs endocriniens ?", r:2},
       {n:28, text:"Mécanisme d'action des perturbateurs endocriniens.", r:2},
@@ -835,6 +844,9 @@ function renderSections() {
   LECTURES.forEach(sec => {
     let qs = sec.questions;
     if (activeFilter === 'hot') qs = qs.filter(q => q.r >= 2);
+    if (activeFilter === 'skip') {
+      // show all lectures but dim the asked ones — don't hide them
+    }
     if (search) qs = qs.filter(q => q.text.toLowerCase().includes(search) || `q${q.n}`.includes(search));
     if (qs.length === 0) return;
     totalVisible += qs.length;
@@ -842,6 +854,8 @@ function renderSections() {
     const hotCount = qs.filter(q => q.r >= 2).length;
     const isOpen = openSections.has(sec.id);
     const hasAudio = !!sec.audio;
+    const isAsked = !!sec.asked;
+    const dimmed = activeFilter === 'skip' && isAsked;
 
     const playBtn = hasAudio
       ? `<button class="play-btn" id="play-btn-${sec.id}" onclick="event.stopPropagation(); toggleAudio('${sec.id}', '${sec.audio}', this)" title="Écouter le podcast" aria-label="Écouter le podcast pour ${sec.title}">&#9654;</button>`
@@ -855,11 +869,12 @@ function renderSections() {
       </div>` : '';
 
     const div = document.createElement('div');
-    div.className = 'section';
+    div.className = 'section' + (dimmed ? ' asked-dimmed' : '');
     div.innerHTML = `
       <div class="sec-head" onclick="toggleSection('${sec.id}')">
         <span class="sec-title">${sec.title}</span>
         <span class="sec-meta">
+          ${isAsked && activeFilter === 'skip' ? `<span class="badge badge-asked">Rot. 2&3</span>` : ''}
           ${hotCount > 0 ? `<span class="badge badge-hot"><i class="ti ti-flame"></i> ${hotCount} répété${hotCount > 1 ? 's' : ''}</span>` : ''}
           <span class="badge badge-q">${qs.length} Q</span>
           ${playBtn}
@@ -879,7 +894,10 @@ function renderSections() {
   });
 
   const countEl = document.getElementById('qcount');
-  if (search || activeFilter !== 'all') {
+  if (activeFilter === 'skip') {
+    const notAsked = LECTURES.filter(s => !s.asked).length;
+    countEl.textContent = `${notAsked} cours à prioriser`;
+  } else if (search || activeFilter !== 'all') {
     countEl.textContent = `${totalVisible} question${totalVisible !== 1 ? 's' : ''} affichée${totalVisible !== 1 ? 's' : ''}`;
   } else {
     countEl.textContent = '';
