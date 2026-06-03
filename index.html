@@ -428,6 +428,107 @@
   .tip-icon.blue { color: var(--accent); }
   .tip-item strong { font-weight: 600; }
 
+  /* ── PREDICTIONS SECTION ── */
+  :root {
+    --purple: #6d28d9;
+    --purple-bg: #f3eeff;
+    --purple-bg2: #ede9fe;
+    --purple-border: #c4b5fd;
+    --purple-text: #4c1d95;
+    --purple-muted: #7c3aed;
+  }
+  [data-theme="dark"] {
+    --purple: #a78bfa;
+    --purple-bg: #1e1030;
+    --purple-bg2: #2d1f45;
+    --purple-border: #5b3f9e;
+    --purple-text: #c4b5fd;
+    --purple-muted: #a78bfa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --purple: #a78bfa;
+      --purple-bg: #1e1030;
+      --purple-bg2: #2d1f45;
+      --purple-border: #5b3f9e;
+      --purple-text: #c4b5fd;
+      --purple-muted: #a78bfa;
+    }
+  }
+  .pred-section {
+    margin-top: 1rem;
+    border: 1.5px solid var(--purple-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 0 0 3px rgba(109,40,217,0.07);
+  }
+  .pred-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--purple-bg2);
+    border-bottom: 1.5px solid var(--purple-border);
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+  }
+  .pred-head:hover { filter: brightness(0.97); }
+  .pred-head-left { display: flex; align-items: center; gap: 10px; }
+  .pred-icon {
+    width: 32px; height: 32px;
+    background: var(--purple);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px; flex-shrink: 0;
+  }
+  .pred-head h2 { font-size: 15px; font-weight: 600; color: var(--purple-text); }
+  .pred-head p { font-size: 12px; color: var(--purple-muted); margin-top: 2px; }
+  .pred-chevron { font-size: 15px; color: var(--purple-muted); transition: transform .2s; flex-shrink: 0; }
+  .pred-chevron.open { transform: rotate(180deg); }
+  .pred-body { display: none; background: var(--purple-bg); }
+  .pred-body.open { display: block; }
+  .pred-confidence {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 20px 6px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--purple-muted);
+  }
+  .pred-confidence::after {
+    content: ''; flex: 1; height: 1px; background: var(--purple-border);
+  }
+  .pred-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 11px 20px;
+    border-bottom: 1px solid var(--purple-border);
+    font-size: 13px; color: var(--purple-text); line-height: 1.55;
+  }
+  .pred-item:last-child { border-bottom: none; }
+  .pred-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    background: var(--purple); color: #fff;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .pred-item-content { flex: 1; }
+  .pred-item-content strong { display: block; font-weight: 600; color: var(--purple-text); margin-bottom: 3px; }
+  .pred-item-content span { font-size: 12px; color: var(--purple-muted); }
+  .pred-tag {
+    font-size: 10px; font-weight: 600; padding: 2px 7px;
+    border-radius: 8px; white-space: nowrap; flex-shrink: 0;
+    letter-spacing: .03em; margin-top: 2px;
+  }
+  .pred-tag-high { background: var(--purple); color: #fff; }
+  .pred-tag-med { background: var(--purple-bg2); color: var(--purple-text); border: 1px solid var(--purple-border); }
+  .pred-disclaimer {
+    padding: 10px 20px 14px;
+    font-size: 11px; color: var(--purple-muted);
+    border-top: 1px solid var(--purple-border);
+    font-style: italic;
+  }
+
   /* ── EMPTY STATE ── */
   .empty {
     text-align: center;
@@ -571,6 +672,113 @@
     <div class="tip-item">
       <i class="ti ti-layout-grid tip-icon blue"></i>
       <div><strong>Révisez par cluster :</strong> Toxicologie (plomb, mercure, solvants, OP, nanos) → Pneumo (silicose, amiante, asthme) → Socio-professionnel (burnout, TIC, horaires, stress). Vous réutilisez des points d'un cours à l'autre.</div>
+    </div>
+  </div>
+
+  <!-- PREDICTIONS -->
+  <div class="pred-section">
+    <div class="pred-head" onclick="togglePred()">
+      <div class="pred-head-left">
+        <div class="pred-icon"><i class="ti ti-crystal-ball"></i></div>
+        <div>
+          <h2>Prédictions pour la Rotation 1</h2>
+          <p>Analyse basée sur les questions passées · fréquences · et questions déjà posées aux Rot. 2&3</p>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down pred-chevron" id="predChev"></i>
+    </div>
+    <div class="pred-body" id="predBody">
+
+      <div class="pred-confidence"><i class="ti ti-circle-filled" style="font-size:8px"></i> Très haute probabilité</div>
+
+      <div class="pred-item">
+        <div class="pred-num">1</div>
+        <div class="pred-item-content">
+          <strong>Bruit &amp; Surdité — caractères, stades ou classification</strong>
+          <span>5 questions dans les examens passés, aucune posée cette année. Thème le plus récurrent de tout le corpus. Formulé comme : <em>"Décrivez les stades de la surdité professionnelle"</em> ou <em>"Citez les caractères de la surdité professionnelle."</em></span>
+        </div>
+        <span class="pred-tag pred-tag-high">Quasi certain</span>
+      </div>
+
+      <div class="pred-item">
+        <div class="pred-num">2</div>
+        <div class="pred-item-content">
+          <strong>Travail en horaires atypiques — effets sur la santé ou conséquences</strong>
+          <span>2 questions répétées dans les examens passés (Q15/Q27), pas encore posée cette année. Formulé comme : <em>"Citez les effets liés au travail en horaire atypique sur la santé."</em></span>
+        </div>
+        <span class="pred-tag pred-tag-high">Très probable</span>
+      </div>
+
+      <div class="pred-item">
+        <div class="pred-num">3</div>
+        <div class="pred-item-content">
+          <strong>Maladies professionnelles — critères de reconnaissance ou cas clinique hépatite B</strong>
+          <span>Thème fondamental non touché cette année. Le cas clinique (Tableau MP n°45) est un classique. Formulé comme : <em>"Citez les critères de reconnaissance d'une maladie professionnelle"</em> ou la question cas clinique Q34.</span>
+        </div>
+        <span class="pred-tag pred-tag-high">Très probable</span>
+      </div>
+
+      <div class="pred-confidence"><i class="ti ti-circle-filled" style="font-size:8px"></i> Haute probabilité</div>
+
+      <div class="pred-item">
+        <div class="pred-num">4</div>
+        <div class="pred-item-content">
+          <strong>Pneumoconioses — complications de la silicose ou pathologies pleurales de l'amiante</strong>
+          <span>Deux questions dans les examens passés (Q20/Q50), aucune posée cette année. Formulé comme : <em>"Citer les complications de la silicose"</em> ou <em>"Citez les pathologies pleurales liées à l'amiante."</em></span>
+        </div>
+        <span class="pred-tag pred-tag-high">Probable</span>
+      </div>
+
+      <div class="pred-item">
+        <div class="pred-num">5</div>
+        <div class="pred-item-content">
+          <strong>Mercure — manifestations neurologiques chroniques</strong>
+          <span>Le côté Plomb a été posé par Rot. 2&3 (Q6), mais le mercure reste entier. Formulé comme : <em>"Décrivez les principales manifestations neurologiques d'une intoxication chronique au mercure."</em></span>
+        </div>
+        <span class="pred-tag pred-tag-high">Probable</span>
+      </div>
+
+      <div class="pred-confidence"><i class="ti ti-circle-filled" style="font-size:8px"></i> Probabilité moyenne</div>
+
+      <div class="pred-item">
+        <div class="pred-num">6</div>
+        <div class="pred-item-content">
+          <strong>Toxicologie industrielle — formes d'intoxication en milieu industriel</strong>
+          <span>Apparue 2 fois dans les examens passés (Q42/Q48), pas posée cette année. Question factuelle et directe.</span>
+        </div>
+        <span class="pred-tag pred-tag-med">Envisageable</span>
+      </div>
+
+      <div class="pred-item">
+        <div class="pred-num">7</div>
+        <div class="pred-item-content">
+          <strong>TIC et Santé — risques pour la santé liés aux TIC</strong>
+          <span>Non posée cette année. Formulé comme : <em>"Décrivez les principaux risques pour la santé associés à l'utilisation des TIC."</em></span>
+        </div>
+        <span class="pred-tag pred-tag-med">Envisageable</span>
+      </div>
+
+      <div class="pred-item">
+        <div class="pred-num">8</div>
+        <div class="pred-item-content">
+          <strong>Cancers professionnels — classification CIRC</strong>
+          <span>Question courte et autonome, non posée cette année. Formulé comme : <em>"Décrivez la classification du CIRC concernant la cancérogénicité des substances."</em></span>
+        </div>
+        <span class="pred-tag pred-tag-med">Envisageable</span>
+      </div>
+
+      <div class="pred-item">
+        <div class="pred-num">9</div>
+        <div class="pred-item-content">
+          <strong>Épuisement professionnel — manifestations cliniques ou mesures préventives</strong>
+          <span>Le facteur de risque (Q2) a été posé en Rot. 2&3, mais les deux autres sous-questions (Q30 prévention, Q38 manifestations cliniques) restent disponibles et les examinateurs peuvent les poser indépendamment.</span>
+        </div>
+        <span class="pred-tag pred-tag-med">Possible</span>
+      </div>
+
+      <div class="pred-disclaimer">
+        <i class="ti ti-info-circle"></i> Ces prédictions sont basées sur l'analyse statistique des questions passées et la logique de rotation des sujets. Elles ne constituent pas une garantie — révisez l'ensemble du programme.
+      </div>
     </div>
   </div>
 </main>
@@ -754,6 +962,13 @@ window.addEventListener('DOMContentLoaded', function() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   document.getElementById('themeIcon').className = isDark ? 'ti ti-sun' : 'ti ti-moon';
 });
+
+function togglePred() {
+  const body = document.getElementById('predBody');
+  const chev = document.getElementById('predChev');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
 
 let activeFilter = 'all';
 const openSections = new Set();
